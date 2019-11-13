@@ -10,20 +10,21 @@ function Horns(data) {
 }
 Horns.all = [];
 
-Horns.prototype.render = function() {
+
+Horns.prototype.render = function () {
 
   // Create a new empty div tag
   let hornOutput = $('<div></div>');
-      hornOutput.addClass(this.keyword);
+  hornOutput.addClass(this.keyword);
 
   // clone (copy) the html from inside the photo-template
   let template = $('#photo-template').html();
 
   // Add the template to the output div
-  hornOutput.html( template );
+  hornOutput.html(template);
 
   // Put the data in
-  hornOutput.find('h2').text( this.title );
+  hornOutput.find('h2').text(this.title);
   hornOutput.find('img').attr('src', this.image_url);
   hornOutput.find('p').text(this.description);
 
@@ -31,31 +32,99 @@ Horns.prototype.render = function() {
 
 };
 
+
+
+
+
+
+
 function populateSelectBox() {
   let seen = {};
-  let select = $('select');
-  Horns.all.forEach( (horn) => {
-    if ( ! seen[horn.keyword] ) {
+  let select = $("#type");
+  Horns.all.forEach((horn) => {
+    if (!seen[horn.keyword]) {
+
       let option = `<option value="${horn.keyword}">${horn.keyword}</option>`;
       select.append(option);
       seen[horn.keyword] = true;
     }
   });
 
-  console.log(seen);
 }
 
-$('select').on('change', function() {
-  let selected = $(this).val();
-  $('div').hide();
-  $(`.${selected}`).fadeIn(800);
-});
+function removeOption() {
+ 
+  optionz=$('option')
 
-$.get('../data/page-1.json')
-  .then( data => {
-    data.forEach( (thing) => {
-      let horn = new Horns(thing);
-      horn.render();
-    });
-  })
-  .then( () => populateSelectBox() );
+  Horns.all.forEach(() => {
+
+    let select = $("#type");
+
+    select.removeChild(optionz)
+
+  });
+
+}
+
+
+
+
+$("#pageSelect").on('change', function () {
+  let selectedPge = $(this).val();
+  console.log('selectedPge : ', selectedPge);
+  $('div').hide();
+
+
+
+
+  if (selectedPge === 'page1') {
+    $.get('../data/page-1.json')
+      .then(data => {
+        data.forEach((thing) => {
+          let horn = new Horns(thing);
+          horn.render();
+          
+
+        });
+      })
+      
+      
+
+      .then(() => populateSelectBox());
+      
+    $("#type").on('change', function () {
+      let selectedPge1 = $(this).val();
+      $('div').hide();
+      $(`.${selectedPge1}`).fadeIn(800);
+    })
+
+  }
+
+
+
+
+  else {
+
+    $.get('../data/page-2.json')
+      .then(data => {
+        data.forEach((thing) => {
+          let horn = new Horns(thing);
+          horn.render();
+          
+
+        });
+      })
+      .then(() => populateSelectBox());
+
+
+    $("#type").on('change', function () {
+      let selectedPge2 = $(this).val();
+      $('div').hide();
+      $(`.${selectedPge2}`).fadeIn(800);
+    })
+
+  }
+})
+
+
+
